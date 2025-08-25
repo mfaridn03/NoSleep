@@ -1,5 +1,8 @@
 ## NoSleep (Windows only)
 
+### dvd-fun branch
+- On/off button now bounces like the DVD logo.
+
 Keeps your Windows display awake with a simple ON/OFF toggle. Built with `tkinter` and `ctypes` on Python 3.
 
 Download available at [releases page](https://github.com/mfaridn03/NoSleep/releases).
