@@ -2,10 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 
 
-class NoSleep:
+class Title:
+    on = "NoSleep: ACTIVE"
+    off = "NoSleep: OFF"
+
+
+class NoSleepApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("NoSleep")
+        self.root.title(Title.off)
         self.root.minsize(300, 200)
 
         window_width = 400
@@ -16,10 +21,36 @@ class NoSleep:
         center_y = int(screen_height / 2 - window_height / 2)
         self.root.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
 
+        self.main_frame = ttk.Frame(self.root)
+        self.main_frame.pack(expand=True, fill="both")
+        self.on = False
+
+        self.lever_button = tk.Button(
+            self.main_frame,
+            text="OFF",
+            command=self.toggle_state,
+            font=("Arial", 16, "bold"),
+            fg="red",
+            width=10,
+            height=2,
+            relief=tk.RAISED,
+            bd=3,
+        )
+        self.lever_button.pack(expand=True)
+
+    def toggle_state(self):
+        self.on = not self.on
+        if self.on:
+            self.lever_button.config(text="ON", fg="green")
+            self.root.title(Title.on)
+        else:
+            self.lever_button.config(text="OFF", fg="red")
+            self.root.title(Title.off)
+
     def run(self):
         self.root.mainloop()
 
 
 if __name__ == "__main__":
-    app = NoSleep()
+    app = NoSleepApp()
     app.run()
