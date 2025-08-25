@@ -23,4 +23,4 @@ Download available at [releases page](https://github.com/mfaridn03/NoSleep/relea
 pyinstaller --onefile --windowed --name=NoSleep app.py
 ```
 
-
+- executable will be in `dist/NoSleep-dvd.exe`
