@@ -1,3 +1,4 @@
+import ctypes
 import tkinter as tk
 from tkinter import ttk
 
@@ -5,6 +6,11 @@ from tkinter import ttk
 class Title:
     on = "NoSleep: ACTIVE"
     off = "NoSleep: OFF"
+
+
+# https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadexecutionstate
+ES_CONTINUOUS = 0x80000000
+ES_DISPLAY_REQUIRED = 0x00000002
 
 
 class NoSleepApp:
@@ -43,9 +49,13 @@ class NoSleepApp:
         if self.on:
             self.lever_button.config(text="ON", fg="green")
             self.root.title(Title.on)
+            ctypes.windll.kernel32.SetThreadExecutionState(
+                ES_CONTINUOUS | ES_DISPLAY_REQUIRED
+            )
         else:
             self.lever_button.config(text="OFF", fg="red")
             self.root.title(Title.off)
+            ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
 
     def run(self):
         self.root.mainloop()
