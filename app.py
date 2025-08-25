@@ -18,6 +18,10 @@ class NoSleepApp:
         self.root = tk.Tk()
         self.root.title(Title.off)
         self.root.minsize(300, 200)
+        self.root.protocol(
+            "WM_DELETE_WINDOW",
+            self.on_close,
+        )
 
         window_width = 400
         window_height = 300
@@ -59,6 +63,10 @@ class NoSleepApp:
 
     def run(self):
         self.root.mainloop()
+
+    def on_close(self):
+        if self.on:
+            ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
 
 
 if __name__ == "__main__":
