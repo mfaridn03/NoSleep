@@ -67,6 +67,7 @@ class NoSleepApp:
     def on_close(self):
         if self.on:
             ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
+        self.root.destroy()
 
 
 if __name__ == "__main__":
