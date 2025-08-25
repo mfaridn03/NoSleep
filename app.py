@@ -35,6 +35,9 @@ class NoSleepApp:
         self.main_frame.pack(expand=True, fill="both")
         self.on = False
 
+        self.BTN_OFF_COLOUR = "#ffd7d7"
+        self.BTN_ON_COLOUR = "#d7ffd7"
+
         self.lever_button = tk.Button(
             self.main_frame,
             text="OFF",
@@ -45,19 +48,20 @@ class NoSleepApp:
             height=2,
             relief=tk.RAISED,
             bd=3,
+            bg=self.BTN_OFF_COLOUR,
         )
         self.lever_button.pack(expand=True)
 
     def toggle_state(self):
         self.on = not self.on
         if self.on:
-            self.lever_button.config(text="ON", fg="green")
+            self.lever_button.config(text="ON", fg="green", bg=self.BTN_ON_COLOUR)
             self.root.title(Title.on)
             ctypes.windll.kernel32.SetThreadExecutionState(
                 ES_CONTINUOUS | ES_DISPLAY_REQUIRED
             )
         else:
-            self.lever_button.config(text="OFF", fg="red")
+            self.lever_button.config(text="OFF", fg="red", bg=self.BTN_OFF_COLOUR)
             self.root.title(Title.off)
             ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
 
