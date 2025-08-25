@@ -17,7 +17,7 @@ Download available at [releases page](https://github.com/mfaridn03/NoSleep/relea
 - [Releases](https://github.com/mfaridn03/NoSleep/releases) are compiled using `pyinstaller`:
 
 ```bash
-pyinstaller --onefile --windowed app.py
+pyinstaller --onefile --windowed --name=NoSleep app.py
 ```
 
 
