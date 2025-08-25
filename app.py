@@ -1,6 +1,7 @@
 import ctypes
 import tkinter as tk
 from tkinter import ttk
+import random
 
 
 class Title:
@@ -50,7 +51,21 @@ class NoSleepApp:
             bd=3,
             bg=self.BTN_OFF_COLOUR,
         )
-        self.lever_button.pack(expand=True)
+        # Use absolute positioning for animation (DVD-style bounce)
+        self.lever_button.place(x=0, y=0)
+
+        # Animation state
+        self.frame_interval_ms = 16  # ~60 FPS
+        self.animation_running = True
+        self.animation_id = None
+        self.pos_x = 0
+        self.pos_y = 0
+        # Randomize initial velocity (ensure non-zero components)
+        self.vel_x = random.choice([-1, 1]) * random.randint(3, 6)
+        self.vel_y = random.choice([-1, 1]) * random.randint(2, 5)
+
+        # Defer animation start until sizes are realized
+        self.root.after(50, self.start_animation)
 
     def toggle_state(self):
         self.on = not self.on
@@ -65,10 +80,77 @@ class NoSleepApp:
             self.root.title(Title.off)
             ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
 
+    def start_animation(self):
+        # Ensure geometry is computed
+        self.root.update_idletasks()
+
+        frame_w = self.main_frame.winfo_width()
+        frame_h = self.main_frame.winfo_height()
+        btn_w = self.lever_button.winfo_width()
+        btn_h = self.lever_button.winfo_height()
+
+        # If sizes aren't ready yet, try again shortly
+        if frame_w <= 1 or frame_h <= 1 or btn_w <= 1 or btn_h <= 1:
+            self.root.after(50, self.start_animation)
+            return
+
+        # Randomize initial position within bounds
+        max_x = max(0, frame_w - btn_w)
+        max_y = max(0, frame_h - btn_h)
+        self.pos_x = random.randint(0, max_x)
+        self.pos_y = random.randint(0, max_y)
+        self.lever_button.place(x=self.pos_x, y=self.pos_y)
+
+        # Start the animation loop
+        self.animate()
+
+    def animate(self):
+        if not self.animation_running:
+            return
+
+        frame_w = self.main_frame.winfo_width()
+        frame_h = self.main_frame.winfo_height()
+        btn_w = self.lever_button.winfo_width()
+        btn_h = self.lever_button.winfo_height()
+
+        # Update position
+        next_x = self.pos_x + self.vel_x
+        next_y = self.pos_y + self.vel_y
+
+        # Horizontal bounce
+        if next_x <= 0:
+            next_x = 0
+            self.vel_x = abs(self.vel_x)
+        elif next_x + btn_w >= frame_w:
+            next_x = max(0, frame_w - btn_w)
+            self.vel_x = -abs(self.vel_x)
+
+        # Vertical bounce
+        if next_y <= 0:
+            next_y = 0
+            self.vel_y = abs(self.vel_y)
+        elif next_y + btn_h >= frame_h:
+            next_y = max(0, frame_h - btn_h)
+            self.vel_y = -abs(self.vel_y)
+
+        self.pos_x = next_x
+        self.pos_y = next_y
+        self.lever_button.place(x=int(self.pos_x), y=int(self.pos_y))
+
+        # Queue next frame
+        self.animation_id = self.root.after(self.frame_interval_ms, self.animate)
+
     def run(self):
         self.root.mainloop()
 
     def on_close(self):
+        # Stop animation loop safely
+        self.animation_running = False
+        if self.animation_id is not None:
+            try:
+                self.root.after_cancel(self.animation_id)
+            except Exception:
+                pass
         if self.on:
             ctypes.windll.kernel32.SetThreadExecutionState(ES_CONTINUOUS)
         self.root.destroy()
