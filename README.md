@@ -6,7 +6,6 @@ Download available at [releases page](https://github.com/mfaridn03/NoSleep/relea
 
 ### Features
 - **One-click toggle**: Turn display keep-awake ON/OFF.
-- **Native Windows behavior**: Uses `ES_CONTINUOUS` and `ES_DISPLAY_REQUIRED` flags via `ctypes`.
 
 ### Requirements
 - **OS**: Windows 10/11 recommended
